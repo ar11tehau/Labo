@@ -60,7 +60,7 @@ def change_name(labo: dict, old_name: str, new_name: str) -> str:
         raise AbsentException
 
 
-def check_member(labo: dict, name: str) -> bool: 
+def is_member(labo: dict, name: str) -> bool: 
     return name in labo
 
 
@@ -75,11 +75,14 @@ def get_office(labo: dict, name: str) -> str :
 
 
 
-def get_all_office(labo: dict) -> list:
+def informations(labo: dict) -> list:
     '''
     Take labo as input then return a sorted list of all offices
     '''
-    return sorted(set(labo.values()))
+    return sorted(labo.items())
+
+
+# all office -> sorted(set(labo.values()))
 
 def main():
     '''

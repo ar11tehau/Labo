@@ -19,14 +19,14 @@ def main():
     change_name(labo, "tete", "tito")
     assert labo == {"tata": "F350", "tito": "F320", "tita": "F320"}
 
-    assert check_member(labo, "toto") == False
-    assert check_member(labo, "tito") == True
+    assert is_member(labo, "toto") == False
+    assert is_member(labo, "tito") == True
 
     assert get_office(labo, 'tito') == "F320"
 
-    for office in get_all_office(labo):
-        print(office)
-
+    for name, office in informations(labo):
+        print(f"{name}'s office : {office}")
+    
     # That shouldn't work
     # add(labo, "toto", "")
     # remove(labo, "titi")

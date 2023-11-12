@@ -1,21 +1,10 @@
 from labo import *
 import menu
 
-menu_list = ["1 - Add someone to the lab", "2 - Remove someone to the lab", "3 - Change someone's office", "4 - Change someone's name", "5 - Check membership of the lab", "6 - Get someone's office", "7 - Get all people in the lab with the office displayed", "0 - Quit"]
-
-# Print menu
-# def menu():
-#     print("1 - Add someone to the lab")
-#     print("2 - Remove someone to the lab")
-#     print("3 - Change someone's office")
-#     print("4 - Change someone's name")
-#     print("5 - Check membership of the lab")
-#     print("6 - Get someone's office")
-#     print("7 - Get all people in the lab with the office displayed")
-#     print("0 - Quit")
+menu_list = ["1 - Add someone to the lab", "2 - Remove someone to the lab", "3 - Change someone's office", "4 - Change someone's name", "5 - Check membership of the lab", "6 - Get someone's office", "7 - Get all people in the lab with the office displayed", "8 - Get offices occupation", "9 - Create an html file with offices occupation", "0 - Quit"]
 
 # Ask choice of user
-def ask_choice():
+def get_choice():
     try: 
         choice = int(input("Choice ? "))
         return choice
@@ -83,6 +72,7 @@ def call_change_name(labo: dict) -> None:
         print("Both are the same")
         print("No changes")
 
+# Get membership of ther lab
 def call_is_member(labo: dict) -> None:
     name = input("Name : ")
     print()
@@ -97,9 +87,35 @@ def call_get_office(labo: dict) -> None:
     except AbsentException:
         print(f"{name} is not in the lab")
 
-def call_informations(labo: dict) -> None:
-    for name, office in informations(labo):
-        print(f"name: {name} -> office: {office}")
+# Get all people and their office
+def call_people_office(labo: dict) -> None:
+    try:
+        for name, office in people_office(labo):
+            print(f"name: {name} -> office: {office}")
+    except EmptyException:
+        print("Nobody registered")
+
+# Get all offices and the people in it
+def call_office_occupation(labo: dict) -> None:
+    try:
+        for office, names in office_occupation(labo):
+            print(f"{office}:")
+            for name in names:
+                print(f"- {name}")
+    except EmptyException:
+        print("Nobody registered")
+
+# Create an html with all offices and the people in it
+def call_createhtml(labo: dict) -> None:
+    try:
+        title = "office_occupation"
+        print(f"Creating {title}.html")
+        print()
+        createhtml(labo, title)
+        print(f"{title}.html created !")
+    except EmptyException:
+        print("Labo is empty")
+        print("No html file created")
 
 # Treat the different choices    
 def choices(labo: dict, choice: str) -> None:
@@ -116,14 +132,18 @@ def choices(labo: dict, choice: str) -> None:
     elif choice == 6:
         call_get_office(labo)
     elif choice == 7:
-        call_informations(labo)
+        call_people_office(labo)
+    elif choice == 8:
+        call_office_occupation(labo)
+    elif choice == 9:
+        call_createhtml(labo)
 
 def main():
     labo = laboratory()
     quit = False
     while not quit:
         menu.menu(menu_list)
-        choice = ask_choice()
+        choice = get_choice()
         choices(labo, choice)
         quit = choice == 0
     

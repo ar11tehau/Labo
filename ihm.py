@@ -1,21 +1,45 @@
 from labo import *
 import menu
 
-menu_list = ["1 - Add someone to the lab", "2 - Remove someone to the lab", "3 - Change someone's office", "4 - Change someone's name", "5 - Check membership of the lab", "6 - Get someone's office", "7 - Get all people in the lab with the office displayed", "8 - Get offices occupation", "9 - Create an html file with offices occupation", "0 - Quit"]
+'''
+    Possible choices:
+    "1 - Add someone to the lab", 
+    "2 - Remove someone to the lab", 
+    "3 - Change someone's office", 
+    "4 - Change someone's name", 
+    "5 - Check membership of the lab", 
+    "6 - Get someone's office", 
+    "7 - Get all people in the lab with the office displayed", 
+    "8 - Get offices occupation", 
+    "9 - Create an html file with offices occupation", 
+    "0 - Quit"
+'''
+
+menu_list = ["1 - Add someone to the lab", 
+             "2 - Remove someone to the lab", 
+             "3 - Change someone's office", 
+             "4 - Change someone's name", 
+             "5 - Check membership of the lab", 
+             "6 - Get someone's office", 
+             "7 - Get all people in the lab with the office displayed", 
+             "8 - Get offices occupation", 
+             "9 - Create an html file with offices occupation", 
+             "0 - Quit"]
 
 # Ask choice of user
 def get_choice():
-    try: 
-        choice = int(input("Choice ? "))
-        return choice
-    except ValueError:
-        print("Not valid")
+    while True:
+        try: 
+            choice = int(input("Choice ? "))
+            return choice
+        except ValueError:
+            print("Not valid")
 
 # Treat the add options
 def call_add(labo: dict) -> None:
     try:
         name = input("Name : ")
-        is_not_present(labo, name)
+        check_absent(labo, name)
         office = input("Office : ")
         print()
         add(labo, name, office)
@@ -30,7 +54,7 @@ def call_remove(labo: dict) -> None:
     try:
         name = input("Name to remove : ")
         print()
-        is_not_absent(labo, name)
+        check_present(labo, name)
         remove(labo, name)
         print(name, "removed")
     except AbsentException:
@@ -42,7 +66,7 @@ def call_change_office(labo: dict) -> None:
     try:
         # Ask name
         name = input("Name of the person changing office : ")
-        is_not_absent(labo, name)
+        check_present(labo, name)
         print(f"old office : {labo[name]}")
         # Ask new office
         new_office = input("New office : ")
@@ -60,7 +84,7 @@ def call_change_office(labo: dict) -> None:
 def call_change_name(labo: dict) -> None:
     try:
         old_name = input("Old name : ")
-        is_not_absent(labo, old_name)
+        check_present(labo, old_name)
         new_name = input("New name : ")
         print()
         change_name(labo, old_name, new_name)
@@ -106,12 +130,12 @@ def call_office_occupation(labo: dict) -> None:
         print("Nobody registered")
 
 # Create an html with all offices and the people in it
-def call_createhtml(labo: dict) -> None:
+def call_create_html(labo: dict) -> None:
     try:
         title = "office_occupation"
         print(f"Creating {title}.html")
         print()
-        createhtml(labo, title)
+        create_html(labo, title)
         print(f"{title}.html created !")
     except EmptyException:
         print("Labo is empty")

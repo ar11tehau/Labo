@@ -19,17 +19,17 @@ class SameException(LaboException):
 class EmptyException(LaboException):
     pass
 
-def is_not_empty(labo: dict):
+def check_not_empty(labo: dict):
     if labo == {}:
         raise EmptyException
 
 # Raise PresentException
-def is_not_present(labo: dict, name: str) -> None:
+def check_absent(labo: dict, name: str) -> None:
     if name in labo:
         raise PresentException
     
 # Raise AbsentException
-def is_not_absent(labo: dict, name: str) -> None:
+def check_present(labo: dict, name: str) -> None:
     if name not in labo:
         raise AbsentException
 
@@ -53,16 +53,15 @@ def remove(labo: dict, name: str) -> None:
 
 
 def change_office(labo: dict, name: str, new_office: str) -> None:
-    if name not in labo:
-        raise AbsentException
-    elif labo[name] == new_office:
+    check_present(labo, name)
+    if labo[name] == new_office:
         raise SameException
     labo[name] = new_office
 
 
 def change_name(labo: dict, old_name: str, new_name: str) -> str:
     try:
-        if old_name == new_name:
+        if old_name not in labo:
             raise SameException
         labo[new_name] = labo.pop(old_name) 
     except KeyError:
@@ -80,8 +79,8 @@ def get_office(labo: dict, name: str) -> str :
         raise AbsentException
 
 
-def people_office(labo: dict) -> list:
-    is_not_empty(labo)
+def people_office(labo: dict) -> dict:
+    check_not_empty(labo)
 
     # Create an ordered dict
     ord_people_office = dict()
@@ -91,15 +90,15 @@ def people_office(labo: dict) -> list:
 
 
 def office_occupation(labo: dict) -> dict:
-    is_not_empty(labo)
+    check_not_empty(labo)
 
     # Create office dict
     office_occ = dict()
-    for name, office in sorted(labo.items()):
+    for name, office in labo.items():
         if office not in office_occ:
             office_occ[office] = [name]
         else:
-            office_occ[office] += [name]
+            office_occ[office].append(name)
     
     # Sort d_office by key, then by value
     ord_office_occ = dict()
@@ -111,8 +110,8 @@ def office_occupation(labo: dict) -> dict:
     return ord_office_occ
 
 
-def createhtml(labo: dict, your_title: str) -> BeautifulSoup:
-    is_not_empty(labo)
+def create_html(labo: dict, your_title: str) -> BeautifulSoup:
+    check_not_empty(labo)
     
     soup = BeautifulSoup(features="html.parser")
 

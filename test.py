@@ -1,8 +1,11 @@
 from labo import *
+import pytest
 
+@pytest.fixture
+def labo():
+    return laboratory()
 
 def main():
-    labo = laboratory()
     # That should word
     add(labo, "toto", "F310")
     add(labo, "tata", "F320")

@@ -2,7 +2,7 @@ import inspect
 
 class Menu:
     '''
-    Attribut liste de text et liste de function
+    
     '''
     def __init__(self):
         self.entries = []

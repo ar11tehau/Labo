@@ -1,5 +1,5 @@
 from labo import *
-import menu
+from menu import *
 
 '''
     Possible choices:
@@ -15,27 +15,7 @@ import menu
     "0 - Quit"
 '''
 
-menu_list = ["1 - Add someone to the lab", 
-             "2 - Remove someone to the lab", 
-             "3 - Change someone's office", 
-             "4 - Change someone's name", 
-             "5 - Check membership of the lab", 
-             "6 - Get someone's office", 
-             "7 - Get all people in the lab with the office displayed", 
-             "8 - Get offices occupation", 
-             "9 - Create an html file with offices occupation", 
-             "0 - Quit"]
-
-# Ask choice of user
-def get_choice():
-    while True:
-        try: 
-            choice = int(input("Choice ? "))
-            return choice
-        except ValueError:
-            print("Not valid")
-
-# Treat the add options
+# Add someone to the lab in a office
 def call_add(labo: dict) -> None:
     try:
         name = input("Name : ")
@@ -49,7 +29,7 @@ def call_add(labo: dict) -> None:
         print("Already member")
         print('No changes')
 
-# Treat the remove options
+# Remove someone from the lab
 def call_remove(labo: dict) -> None:
     try:
         name = input("Name to remove : ")
@@ -61,7 +41,7 @@ def call_remove(labo: dict) -> None:
         print("Not a member of the labo")
         print('No changes')
 
-# Treat change office
+# Change someone's office
 def call_change_office(labo: dict) -> None:
     try:
         # Ask name
@@ -80,7 +60,7 @@ def call_change_office(labo: dict) -> None:
         print('Old office and new office are the same')
         print('No changes')
     
-# Treat change name
+# Change someone's name
 def call_change_name(labo: dict) -> None:
     try:
         old_name = input("Old name : ")
@@ -96,12 +76,13 @@ def call_change_name(labo: dict) -> None:
         print("Both are the same")
         print("No changes")
 
-# Get membership of ther lab
+# Check membership of ther lab
 def call_is_member(labo: dict) -> None:
     name = input("Name : ")
     print()
     print(f"{name} is in the lab" if is_member(labo, name) else f"{name} is not in the lab")
 
+# Get someone office
 def call_get_office(labo: dict) -> None:
     try:
         name = input("Name of the person's office : ")
@@ -114,7 +95,7 @@ def call_get_office(labo: dict) -> None:
 # Get all people and their office
 def call_people_office(labo: dict) -> None:
     try:
-        for name, office in people_office(labo):
+        for name, office in people_office(labo).items():
             print(f"name: {name} -> office: {office}")
     except EmptyException:
         print("Nobody registered")
@@ -141,36 +122,54 @@ def call_create_html(labo: dict) -> None:
         print("Labo is empty")
         print("No html file created")
 
-# Treat the different choices    
-def choices(labo: dict, choice: str) -> None:
-    if choice == 1:
-        call_add(labo)
-    elif choice == 2:
-        call_remove(labo)
-    elif choice == 3:
-        call_change_office(labo)
-    elif choice == 4:
-        call_change_name(labo)
-    elif choice == 5:
-        call_is_member(labo)
-    elif choice == 6:
-        call_get_office(labo)
-    elif choice == 7:
-        call_people_office(labo)
-    elif choice == 8:
-        call_office_occupation(labo)
-    elif choice == 9:
-        call_createhtml(labo)
+# Get json name from user
+def get_json_name() -> None:
+    return input("json file name : ")
+
+def get_json_export_comfirm() -> None:
+    while True:
+        print("Your current laboratory is not empty")
+        print("Import json_file will erase the current laboratory data")
+        confirm = input("Continue ? [Y/n]: ").lower() or "y"
+        if confirm in ["y", "yes", "n", "no"]:
+            return confirm.lower() in ["y", "yes"]
+
+# Export json
+def call_json_import(labo: dict) -> dict:
+    if is_empty(labo):
+        return json_import(get_json_name())
+    else:
+        if get_json_export_comfirm():
+            return json_import(get_json_name())
+
+# Create the menu
+def call_menu(get_labo: list, menu: Menu):
+    menu.add("Add someone to the lab", lambda: call_add(get_labo[0]))
+    menu.add("Remove someone to the lab", lambda: call_remove(get_labo[0]))
+    menu.add("Change someone's office", lambda: call_change_office(get_labo[0]))
+    menu.add("Check membership of the lab", lambda: call_is_member(get_labo[0]))
+    menu.add("Get someone's office", lambda: call_get_office(get_labo[0]))
+    menu.add("Get all people in the lab with the office displayed", lambda: call_people_office(get_labo[0]))
+    menu.add("Get offices occupation", lambda: call_office_occupation(get_labo[0]))
+    menu.add("Get offices occupation", lambda: call_create_html(get_labo[0]))
+    menu.add("Create an html file with offices occupation", lambda: call_add(get_labo[0]))
+    menu.add("Export", lambda: json_export(get_labo[0], get_json_name()))
+    menu.add("Import", lambda: call_json_import(get_labo[0]))
+
 
 def main():
     labo = laboratory()
+    get_labo = list()
+    get_labo.append(labo)
+    my_menu = Menu()  
+    call_menu(get_labo, my_menu)
     quit = False
     while not quit:
-        menu.menu(menu_list)
-        choice = get_choice()
-        choices(labo, choice)
-        quit = choice == 0
+        response = my_menu.manage()
+        if response not in [None, 0]:
+            labo = response
+            get_labo[0] = labo    
+        quit = response == 0
     
-
 if __name__ == "__main__":
     main()

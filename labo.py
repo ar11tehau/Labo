@@ -1,5 +1,6 @@
 #/usr/bin/env python3
 from bs4 import BeautifulSoup
+import json
 
 class LaboException(Exception):
     """ 
@@ -19,6 +20,11 @@ class SameException(LaboException):
 class EmptyException(LaboException):
     pass
 
+# Raise EmptyException
+def is_empty(labo: dict) -> bool:
+    return labo == {}
+
+# Raise EmptyException
 def check_not_empty(labo: dict):
     if labo == {}:
         raise EmptyException
@@ -34,32 +40,30 @@ def check_present(labo: dict, name: str) -> None:
         raise AbsentException
 
 # Create and return an empty dict labo object
-def laboratory():
+def laboratory() -> dict:
     return {}
-
 
 # Add someone to the lab in a office
 def add(labo: dict, name: str, office: str) -> None:
-    if name in labo:
-        raise PresentException
+    check_absent
     labo[name] = office
 
-
+# Remove someone from the lab
 def remove(labo: dict, name: str) -> None:
     try:
         del labo[name]
     except KeyError:
         raise AbsentException
 
-
+# Change someone's office
 def change_office(labo: dict, name: str, new_office: str) -> None:
     check_present(labo, name)
     if labo[name] == new_office:
         raise SameException
     labo[name] = new_office
 
-
-def change_name(labo: dict, old_name: str, new_name: str) -> str:
+# Change someone's name
+def change_name(labo: dict, old_name: str, new_name: str) -> None:
     try:
         if old_name not in labo:
             raise SameException
@@ -67,18 +71,18 @@ def change_name(labo: dict, old_name: str, new_name: str) -> str:
     except KeyError:
         raise AbsentException
 
-
+# Check membership of ther lab
 def is_member(labo: dict, name: str) -> bool: 
     return name in labo
 
-
-def get_office(labo: dict, name: str) -> str :
+# Get someone office
+def get_office(labo: dict, name: str) -> dict:
     try:
         return labo[name]
     except KeyError:
         raise AbsentException
 
-
+# Get all people and their office
 def people_office(labo: dict) -> dict:
     check_not_empty(labo)
 
@@ -88,7 +92,7 @@ def people_office(labo: dict) -> dict:
         ord_people_office[name] = office
     return ord_people_office
 
-
+# Get all offices and the people in it
 def office_occupation(labo: dict) -> dict:
     check_not_empty(labo)
 
@@ -102,15 +106,19 @@ def office_occupation(labo: dict) -> dict:
     
     # Sort d_office by key, then by value
     ord_office_occ = dict()
+
+    # Sort offices
     for office, names in sorted(office_occ.items()):
         ord_office_occ[office] = names
+    
+    # Sort names for each offices
     for office, names in ord_office_occ.items():
-        office_occ[office] = sorted(names)
-
+        office_occ[office] = names.sort()
+    
     return ord_office_occ
 
-
-def create_html(labo: dict, your_title: str) -> BeautifulSoup:
+# Create an html with all offices and the people in it
+def create_html(labo: dict, your_title: str) -> None:
     check_not_empty(labo)
     
     soup = BeautifulSoup(features="html.parser")
@@ -144,7 +152,29 @@ def create_html(labo: dict, your_title: str) -> BeautifulSoup:
     with open(f'{your_title}.html', 'w') as html:
         html.write(str(html_content))
 
-# all office -> sorted(set(labo.values()))
+# Export the lab into a json
+def json_export(labo: dict, file_name: str) -> None:
+    try:
+        file_path = file_name + '.json'
+        with open(file_path, 'w') as json_file:
+            json.dump(labo, json_file)
+            print(f"File saved to : {file_path}")
+    except Exception as error:
+        print("Something went wrong, didn't save the file")
+        print(error)
+
+# Import the json file then return lab dict
+def json_import(file_name: str) -> dict:
+    try:
+        if not file_name.endswith(".json"):
+            file_name += ".json"
+        with open(file_name, 'r') as json_file:
+            labo = json.load(json_file)
+            print(f"{file_name} file imported")
+            return labo
+    except Exception as error:
+        print("Something went wrong, nothing to return")
+        print(error)
 
 def main():
     '''

@@ -1,19 +1,21 @@
 from labo import *
 import pytest
 
-@pytest.fixture
-def labo():
-    return laboratory()
+# @pytest.fixture
+# def labo():
+#     return laboratory()
 
 def main():
-    # That should word
+    # That should work
+    labo = laboratory()
     add(labo, "toto", "F310")
     add(labo, "tata", "F320")
     add(labo, "tete", "F320")
     add(labo, "tita", "F320")
     add(labo, "ana", "F320")
     add(labo, "arii", "F310")
-    assert labo == {"toto": "F310", "tata": "F320", "tete": "F320", "tita": "F320", "ana": "F320", "arii": "F310"}
+    print(labo)
+    assert labo == {'toto': 'F310', 'tata': 'F320', 'tete': 'F320', 'tita': 'F320', 'ana': 'F320', 'arii': 'F310'}
 
     remove(labo, "toto")
     assert labo == {"tata": "F320", "tete": "F320", "tita": "F320", "ana": "F320", "arii": "F310"}
@@ -30,10 +32,11 @@ def main():
     assert get_office(labo, 'tito') == "F320"
 
     assert people_office(labo) == {'ana': 'F320', 'arii': 'F310', 'tata': 'F350', 'tita': 'F320', 'tito': 'F320'}
-
+    print(office_occupation(labo))
+    
     assert office_occupation(labo) == {'F310': ['arii'], 'F320': ['ana', 'tita', 'tito'], 'F350': ['tata']}
 
-    createhtml(labo, "office_occupation")
+    create_html(labo, "office_occupation")
     
     # That shouldn't work
     # add(labo, "toto", "")
